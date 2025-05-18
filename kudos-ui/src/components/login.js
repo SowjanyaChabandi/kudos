@@ -1,44 +1,51 @@
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 
-function Login({ onLogin }) {
-  const [username, setUsername] = useState('')
+const Login = ({ onLogin, loading }) => {
+  const [username, setUsername] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    if (username.trim()) {
-      onLogin(username)
-      setUsername('')
-    } else {
-      alert('Please enter a username')
+    e.preventDefault();
+    if (loading || submitted) return; // Prevent multiple submits
+
+    if (!username.trim()) {
+      alert('Please enter a username');
+      return;
     }
-  }
+
+    setSubmitted(true);
+    onLogin(username.trim());
+  };
+
+  // Reset submitted when loading is false (login finished)
+  useEffect(() => {
+    if (!loading) {
+      setSubmitted(false);
+    }
+  }, [loading]);
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-4 text-center">Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="username">
-            Username
-          </label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
-            placeholder="Enter your username"
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-        >
-          Login
-        </button>
-      </form>
-    </div>
-  )
-}
+    <form onSubmit={handleSubmit} className="max-w-sm mx-auto">
+      <input
+        type="text"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Enter username"
+        autoFocus
+        disabled={loading}
+        className="border p-2 rounded w-full mb-2"
+      />
+      <button
+        type="submit"
+        disabled={loading || submitted}
+        className={`w-full py-2 rounded text-white ${
+          loading || submitted ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+        }`}
+      >
+        {loading ? 'Logging in...' : 'Login'}
+      </button>
+    </form>
+  );
+};
 
-export default Login
+export default Login;
