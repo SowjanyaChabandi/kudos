@@ -45,3 +45,6 @@ class Kudo:
     def get_by_receiver(receiver_id):
         return [k for k in kudos if k["receiver_id"] == receiver_id]
     
+    @staticmethod
+    def get_by_giver(giver_id):
+        return [k for k in kudos if k["giver_id"] == giver_id]

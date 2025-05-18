@@ -24,17 +24,25 @@ def create_app():
     # Register blueprint
     app.register_blueprint(blueprint)
 
+    # Configure CORS
     CORS(
         app,
         resources={r"/*": {
-            "origins": ["http://localhost:3000"],
-            "supports_credentials": True,
-            "allow_headers": ["Content-Type", "Authorization"],
-            "methods": ["GET", "POST", "OPTIONS"],
-            "expose_headers": ["Content-Type"]
+            "origins": "http://localhost:3000",
+            "supports_credentials": True
         }},
-        automatic_options=True
+        supports_credentials=True
     )
+
+
+    # Session cookie configuration
+    app.config.update(
+        SESSION_COOKIE_SAMESITE='None',
+        SESSION_COOKIE_SECURE=True,  # Must be True for SameSite=None
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_PATH='/'
+    )
+
 
     return app
 

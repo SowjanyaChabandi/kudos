@@ -25,6 +25,10 @@ def init_routes(api):
 
 @login_ns.route('')
 class Login(Resource):
+    @login_ns.doc('login_user')
+    def options(self):
+        return {}, 200
+
     @login_ns.expect(login_model)
     @login_ns.doc('login_user')
     def post(self):
@@ -42,8 +46,12 @@ class Login(Resource):
             }, 200
         return {'error': 'User not found'}, 404
 
-@users_ns.route('')
+@users_ns.route('/available')
 class Users(Resource):
+    @users_ns.doc('list_users')
+    def options(self):
+        return {}, 200
+
     @users_ns.doc('list_users')
     def get(self):
         if 'user_id' not in session:
@@ -51,10 +59,35 @@ class Users(Resource):
         users_list = [u for u in User.get_all() if u['id'] != session['user_id']]
         # users_list = User.get_all()
         return [{'id': u['id'], 'username': u['username']} for u in users_list], 200
+
+
+@login_ns.route('/me')
+class CurrentUser(Resource):
+    @login_ns.doc('get_current_user')
+    def options(self):
+        return {}, 200
+
+    @login_ns.doc('get_current_user')
+    def get(self):
+        if 'user_id' not in session:
+            return {'error': 'Unauthorized'}, 401
+        user = User.get_by_id(session['user_id'])
+        org = Organization.get_by_id(user['organization_id'])
+        return {
+            'id': user['id'],
+            'username': user['username'],
+            'organization': org['name'],
+            'kudos_available': user['kudos_available']
+        }, 200
     
 
-@kudos_ns.route('')
+@kudos_ns.route('/send')
 class GiveKudo(Resource):
+    @kudos_ns.expect(kudo_model)
+    @kudos_ns.doc('give_kudo')
+    def options(self):
+        return {}, 200
+
     @kudos_ns.expect(kudo_model)
     @kudos_ns.doc('give_kudo')
     def post(self):
@@ -78,15 +111,42 @@ class GiveKudo(Resource):
         giver['kudos_available'] -= 1
         return {'message': 'Kudo given successfully'}, 200
 
+
 @kudos_ns.route('/received')
 class ReceivedKudos(Resource):
+    @kudos_ns.doc('list_received_kudos')
+    def options(self):
+        return {}, 200
+
     @kudos_ns.doc('list_received_kudos')
     def get(self):
         if 'user_id' not in session:
             return {'error': 'Unauthorized'}, 401
-        kudos_list = Kudo.get_by_receiver(session['user_id'])
-        return [{
-            'giver': User.get_by_id(k['giver_id'])['username'],
-            'message': k['message'],
-            'created_at': k['created_at'].isoformat()
-        } for k in kudos_list], 200
+        
+        user_id = session['user_id']
+        
+        # Get kudos received by the user
+        received_kudos = Kudo.get_by_receiver(user_id)
+        
+        # Get kudos sent by the user
+        sent_kudos = Kudo.get_by_giver(user_id)
+        
+        # Combine both lists
+        combined_kudos = received_kudos + sent_kudos
+        
+        # sort by creation date descending
+        combined_kudos.sort(key=lambda k: k['created_at'])
+        
+        result = []
+        for k in combined_kudos:
+            giver = User.get_by_id(k['giver_id'])
+            receiver = User.get_by_id(k['receiver_id'])
+            result.append({
+                'giver': giver['username'] if giver else 'Unknown',
+                'receiver': receiver['username'] if receiver else 'Unknown',
+                'message': k['message'],
+                'created_at': k['created_at'].isoformat()
+            })
+
+        return result, 200
+
