@@ -1,5 +1,7 @@
 from flask_restx import Namespace, Resource, fields
-from flask import session
+from flask import session, jsonify
+from datetime import datetime, timedelta
+
 from service.models import User, Kudo, Organization
 
 # Define namespaces
@@ -22,6 +24,14 @@ def init_routes(api):
     api.add_namespace(login_ns)
     api.add_namespace(users_ns)
     api.add_namespace(kudos_ns)
+
+    @api.route('/logout')
+    class Logout(Resource):
+        def post(self):
+            session.clear()
+            response = jsonify({'message': 'Logged out'})
+            response.set_cookie('session')
+            return response
 
 @login_ns.route('')
 class Login(Resource):
@@ -79,37 +89,43 @@ class CurrentUser(Resource):
             'organization': org['name'],
             'kudos_available': user['kudos_available']
         }, 200
-    
+
 
 @kudos_ns.route('/send')
 class GiveKudo(Resource):
     @kudos_ns.expect(kudo_model)
     @kudos_ns.doc('give_kudo')
-    def options(self):
-        return {}, 200
-
-    @kudos_ns.expect(kudo_model)
-    @kudos_ns.doc('give_kudo')
     def post(self):
-        if 'user_id' not in session:
-            return {'error': 'Unauthorized'}, 401
         data = kudos_ns.payload
         receiver_id = data.get('receiver_id')
         message = data.get('message')
 
+        giver_id = session.get('user_id')
         giver = User.get_by_id(session['user_id'])
-        receiver = User.get_by_id(receiver_id)
 
-        if not receiver or receiver['organization_id'] != giver['organization_id']:
-            return {'error': 'Invalid receiver'}, 400
+
+        # Prevent self-kudos
+        if giver_id == receiver_id:
+            return {'error': 'You cannot give kudos to yourself'}, 400
+
+        # Check if one week passed since last reset
+        now = datetime.utcnow()
+        last_reset_str = giver.get('last_reset_at')
+        last_reset = datetime.fromisoformat(last_reset_str) if last_reset_str else None
+
+        if not last_reset or (now - last_reset >= timedelta(weeks=1)):
+            giver['kudos_available'] = 3  # Reset weekly limit
+            giver['last_reset_at'] = now.isoformat()
+            User.update(giver)
+
         if giver['kudos_available'] <= 0:
             return {'error': 'No kudos available'}, 400
-        if not message or len(message.strip()) == 0:
-            return {'error': 'Message is required'}, 400
 
-        Kudo.create(giver['id'], receiver_id, message)
         giver['kudos_available'] -= 1
-        return {'message': 'Kudo given successfully'}, 200
+        User.update(giver)
+        Kudo.create(giver_id, receiver_id, message)
+
+        return {'message': 'Kudo given successfully'}
 
 
 @kudos_ns.route('/received')
@@ -149,4 +165,3 @@ class ReceivedKudos(Resource):
             })
 
         return result, 200
-

@@ -125,30 +125,12 @@ function App() {
           ? `Login failed: ${err.response.data?.error || err.message}`
           : 'Login failed: Network error - Server may be down';
         setError(errorMessage);
+        setUser(null)
       }
     } finally {
       setLoading(false);
     }
   };
-
-  // const handleSendKudo = async (receiverId, message) => {
-  //   try {
-  //     await axiosInstance.post('/kudos/send', { receiver_id: receiverId, message });
-  //     setError(null);
-  //     alert('Kudo sent successfully!');
-  //     await fetchCurrentUser();
-  //     setTimeout(() => {
-  //       fetchReceivedKudos();
-  //     }, 500);
-  //   } catch (err) {
-  //     alert("No kudos available")
-  //     console.error('Send kudo error:', err);
-  //     const errorMessage = err.response
-  //       ? `Error sending kudo: ${err.response.data?.error || err.message}`
-  //       : 'Error sending kudo: Network Error - Server may be down';
-  //     setError(errorMessage);
-  //   }
-  // };
 
 
   const handleSendKudo = async (receiverId, message) => {
@@ -160,7 +142,8 @@ function App() {
       // Ensure all related data is updated
       await Promise.all([
         fetchCurrentUser(),
-        fetchReceivedKudos()
+        fetchReceivedKudos(),
+        fetchUsers()
       ]);
     } catch (err) {
       alert("No kudos available");
@@ -173,12 +156,16 @@ function App() {
   };
   
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post('/logout');
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
     setUser(null);
     setUsers([]);
     setReceivedKudos([]);
     setError(null);
-    document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=None';
   };
 
   return (
