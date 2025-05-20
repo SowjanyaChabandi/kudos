@@ -16,7 +16,9 @@ login_model = login_ns.model('Login', {
 
 kudo_model = kudos_ns.model('Kudo', {
     'receiver_id': fields.Integer(required=True, description='Receiver user ID'),
-    'message': fields.String(required=True, description='Kudo message')
+    'message': fields.String(required=True, description='Kudo message'),
+    'giver_name': fields.String(required=True, description='Name of the giver who is sending kudo'),
+    'receiver_name': fields.String(required=True, description='Name of the giver who is receiving kudo'),
 })
 
 def init_routes(api):
@@ -99,6 +101,8 @@ class GiveKudo(Resource):
         data = kudos_ns.payload
         receiver_id = data.get('receiver_id')
         message = data.get('message')
+        giver_name = data.get('giver_name')
+        receiver_name = data.get('receiver_name')
 
         giver_id = session.get('user_id')
         giver = User.get_by_id(session['user_id'])
@@ -123,7 +127,7 @@ class GiveKudo(Resource):
 
         giver['kudos_available'] -= 1
         User.update(giver)
-        Kudo.create(giver_id, receiver_id, message)
+        Kudo.create(giver_id, receiver_id, giver_name, receiver_name, message)
 
         return {'message': 'Kudo given successfully'}
 
@@ -143,6 +147,9 @@ class ReceivedKudos(Resource):
         
         # Get kudos received by the user
         received_kudos = Kudo.get_by_receiver(user_id)
+
+        # all_kudos = Kudo.get_all()
+        # return jsonify([serialize_kudo(k) for k in all_kudos])
         
         # Get kudos sent by the user
         sent_kudos = Kudo.get_by_giver(user_id)

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import './App.css';
 import Login from './components/login';
 import UserList from './components/UserList';
 import SendKudo from './components/SendKudos';
@@ -13,6 +14,8 @@ function App() {
   const [receivedKudos, setReceivedKudos] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const filteredKudos = receivedKudos.filter(k => k.receiver === user.username);
 
   const axiosInstance = axios.create({
     baseURL: API_URL,
@@ -169,42 +172,39 @@ function App() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4 text-center">Kudos App</h1>
-      {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+    <div className="container">
+      <h1 className="app-title">Kudos App</h1>
+      {error && <p className="error-message">{error}</p>}
       {!user ? (
         <Login onLogin={handleLogin} loading={loading} />
       ) : (
         <div>
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <p className="text-lg">Welcome, {user.username}!</p>
+          <div className="header">
+            <div className="user-info">
+              <p>Welcome, {user.username}!</p>
               <p>Organization: {user.organization || 'Mitratech'}</p>
               <p>Kudos Available: {user.kudos_available}</p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-            >
-              Logout
-            </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid-layout">
             <div>
-              <h2 className="text-xl font-semibold mb-2">Send Kudos</h2>
+              <h2 className="section-title">Send Kudos</h2>
               <SendKudo users={users} onSendKudo={handleSendKudo} disabled={user.kudos_available <= 0}/>
             </div>
             <div>
-              <h2 className="text-xl font-semibold mb-2">Received Kudos</h2>
-              <ReceivedKudos kudos={receivedKudos} />
+              <h2 className="section-title">Received Kudos</h2>
+              <ReceivedKudos kudos={filteredKudos} />
             </div>
           </div>
-          <h2 className="text-xl font-semibold mt-4 mb-2">Users</h2>
-          <UserList users={users} />
+          <button onClick={handleLogout} className="logout-button">
+              Logout
+          </button>
+          {/* <h2 className="user-section-title">Users</h2>
+          <UserList users={users} /> */}
         </div>
       )}
     </div>
   );
-}
+}  
 
 export default App;

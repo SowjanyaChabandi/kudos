@@ -1,0 +1,31 @@
+.kudo-container {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.kudo-empty-message {
+color: #4b5563;
+}
+
+.kudo-list {
+list-style: none;
+padding: 0;
+margin: 0;
+}
+
+.kudo-item {
+padding: 1rem;
+border: 1px solid #d1d5db;
+border-radius: 0.375rem;
+background-color: #f9fafb;
+}
+
+.kudo-item p {
+margin: 0.25rem 0;
+}
+
+.kudo-item strong {
+font-weight: 600;
+}

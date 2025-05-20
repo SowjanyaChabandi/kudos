@@ -90,11 +90,13 @@ class User:
 
 class Kudo:
     @staticmethod
-    def create(giver_id, receiver_id, message):
+    def create(giver_id, receiver_id, giver_name, receiver_name, message):
         kudo = {
             "id": len(kudos) + 1,
             "giver_id": giver_id,
             "receiver_id": receiver_id,
+            "giver_name": giver_name,
+            "receiver_name": receiver_name,
             "message": message,
             "created_at": datetime.utcnow()
         }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './login.css';
 
 const Login = ({ onLogin, loading }) => {
   const [username, setUsername] = useState('');
@@ -25,7 +26,10 @@ const Login = ({ onLogin, loading }) => {
   }, [loading]);
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-sm mx-auto">
+    <form onSubmit={handleSubmit} className="login-form">
+        <label className="login-label">
+            Username
+        </label>
       <input
         type="text"
         value={username}
@@ -33,14 +37,13 @@ const Login = ({ onLogin, loading }) => {
         placeholder="Enter username"
         autoFocus
         disabled={loading}
-        className="border p-2 rounded w-full mb-2"
+        className="login-input"
+        required
       />
       <button
         type="submit"
         disabled={loading || submitted}
-        className={`w-full py-2 rounded text-white ${
-          loading || submitted ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-        }`}
+        className="login-button"
       >
         {loading ? 'Logging in...' : 'Login'}
       </button>
