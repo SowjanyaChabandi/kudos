@@ -3,22 +3,22 @@ import './login.css';
 
 const Login = ({ onLogin, loading }) => {
   const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (loading || submitted) return; // Prevent multiple submits
+    if (loading || submitted) return;
 
-    if (!username.trim()) {
-      alert('Please enter a username');
+    if (!username.trim() || !password.trim()) {
+      alert('Please enter both username and password');
       return;
     }
 
     setSubmitted(true);
-    onLogin(username.trim());
+    onLogin(username.trim(), password.trim());
   };
 
-  // Reset submitted when loading is false (login finished)
   useEffect(() => {
     if (!loading) {
       setSubmitted(false);
@@ -27,9 +27,7 @@ const Login = ({ onLogin, loading }) => {
 
   return (
     <form onSubmit={handleSubmit} className="login-form">
-        <label className="login-label">
-            Username
-        </label>
+      <label className="login-label">Username</label>
       <input
         type="text"
         value={username}
@@ -40,6 +38,18 @@ const Login = ({ onLogin, loading }) => {
         className="login-input"
         required
       />
+
+      <label className="login-label">Password</label>
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Enter password"
+        disabled={loading}
+        className="login-input"
+        required
+      />
+
       <button
         type="submit"
         disabled={loading || submitted}

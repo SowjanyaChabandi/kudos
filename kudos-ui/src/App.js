@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './App.css';
 import Login from './components/login';
+import Modal from './components/Modal';
 import UserList from './components/UserList';
 import SendKudo from './components/SendKudos';
 import ReceivedKudos from './components/ReceivedKudos';
@@ -14,6 +15,7 @@ function App() {
   const [receivedKudos, setReceivedKudos] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const filteredKudos = receivedKudos.filter(k => k.receiver === user.username);
 
@@ -107,13 +109,13 @@ function App() {
   }, [fetchCurrentUser, fetchUsers, fetchReceivedKudos]);
 
 
-  const handleLogin = async (username) => {
+  const handleLogin = async (username, password) => {
     if (loading) return; // Prevent double submit
     console.log('handleLogin triggered for:', username);
 
     setLoading(true);
     try {
-      const response = await axiosInstance.post('/login', { username });
+      const response = await axiosInstance.post('/login', { username, password });
       setUser(response.data);
       setError(null);
       await Promise.all([fetchUsers(), fetchReceivedKudos()]);
@@ -181,26 +183,33 @@ function App() {
         <div>
           <div className="header">
             <div className="user-info">
-              <p>Welcome, {user.username}!</p>
-              <p>Organization: {user.organization || 'Mitratech'}</p>
-              <p>Kudos Available: {user.kudos_available}</p>
+              <p>Welcome, <strong>{user.username}</strong></p>
+              <p>Organization: <strong>{user.organization}</strong></p>
+              <p>Kudos Available: <strong>{user.kudos_available}</strong></p>
             </div>
           </div>
           <div className="grid-layout">
-            <div>
+            <div className="send-kudos-card">
               <h2 className="section-title">Send Kudos</h2>
               <SendKudo users={users} onSendKudo={handleSendKudo} disabled={user.kudos_available <= 0}/>
             </div>
             <div>
-              <h2 className="section-title">Received Kudos</h2>
-              <ReceivedKudos kudos={filteredKudos} />
+              <button onClick={() => setModalOpen(true)} className="open-modal-button">
+                View Received Kudos
+              </button>
             </div>
           </div>
+          <Modal
+            isOpen={modalOpen}
+            onRequestClose={() => setModalOpen(false)}
+            >
+            <div className="modal-content-scroll">
+              <ReceivedKudos kudos={filteredKudos} />
+            </div>
+          </Modal>
           <button onClick={handleLogout} className="logout-button">
               Logout
           </button>
-          {/* <h2 className="user-section-title">Users</h2>
-          <UserList users={users} /> */}
         </div>
       )}
     </div>

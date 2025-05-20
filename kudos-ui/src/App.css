@@ -37,6 +37,11 @@
   }
 }
 
+.app-title {
+  text-align: center;
+  color: blueviolet;
+}
+
 .container {
   max-width: 800px;
   margin: 0 auto;
@@ -58,6 +63,21 @@
 
 .welcome {
   font-size: 1.125rem;
+}
+
+.send-kudos-card {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  margin-bottom: 20px;
+}
+
+.send-kudos-card .section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
 .org-info, .kudos-info {
