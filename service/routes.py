@@ -11,7 +11,8 @@ kudos_ns = Namespace('kudos', description='Kudos operations')
 
 # Models for request validation
 login_model = login_ns.model('Login', {
-    'username': fields.String(required=True, description='User username')
+    'username': fields.String(required=True, description='User username'),
+    'password': fields.String(required=True, description='User password')
 })
 
 kudo_model = kudos_ns.model('Kudo', {
@@ -37,17 +38,15 @@ def init_routes(api):
 
 @login_ns.route('')
 class Login(Resource):
-    @login_ns.doc('login_user')
-    def options(self):
-        return {}, 200
 
     @login_ns.expect(login_model)
     @login_ns.doc('login_user')
     def post(self):
         data = login_ns.payload
         username = data.get('username')
+        password = data.get('password')
         user = User.get_by_username(username)
-        if user:
+        if user and user.get('password') == password:
             session['user_id'] = user['id']
             org = Organization.get_by_id(user['organization_id'])
             return {
@@ -56,13 +55,10 @@ class Login(Resource):
                 'organization': org['name'],
                 'kudos_available': user['kudos_available']
             }, 200
-        return {'error': 'User not found'}, 404
+        return {'error': 'Invalid username or password'}, 404
 
 @users_ns.route('/available')
 class Users(Resource):
-    @users_ns.doc('list_users')
-    def options(self):
-        return {}, 200
 
     @users_ns.doc('list_users')
     def get(self):
@@ -75,9 +71,6 @@ class Users(Resource):
 
 @login_ns.route('/me')
 class CurrentUser(Resource):
-    @login_ns.doc('get_current_user')
-    def options(self):
-        return {}, 200
 
     @login_ns.doc('get_current_user')
     def get(self):
@@ -134,9 +127,6 @@ class GiveKudo(Resource):
 
 @kudos_ns.route('/received')
 class ReceivedKudos(Resource):
-    @kudos_ns.doc('list_received_kudos')
-    def options(self):
-        return {}, 200
 
     @kudos_ns.doc('list_received_kudos')
     def get(self):

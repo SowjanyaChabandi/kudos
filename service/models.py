@@ -6,7 +6,8 @@ USERS_FILE = 'users.json'
 KUDOS_FILE = 'kudos.json'
 
 organizations = [
-    {"id": 1, "name": "Mitratech"}
+    {"id": 1, "name": "Mitratech"},
+    {"id": 2, "name": "Innova Solutions"},
 ]
 
 # Load users from file or default list
@@ -21,7 +22,7 @@ except (FileNotFoundError, json.JSONDecodeError):
     users = [
         {"id": 1, "username": "alice", "organization_id": 1, "kudos_available": 3, "kudos_last_reset": None},
         {"id": 2, "username": "bob", "organization_id": 1, "kudos_available": 3, "kudos_last_reset": None},
-        {"id": 3, "username": "sowji", "organization_id": 1, "kudos_available": 3, "kudos_last_reset": None}
+        {"id": 3, "username": "sowji", "organization_id": 2, "kudos_available": 3, "kudos_last_reset": None}
     ]
 
 # Load kudos from file or start empty
