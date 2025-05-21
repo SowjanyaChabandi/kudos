@@ -4,7 +4,7 @@
     "username": "alice",
     "password": "alice123",
     "organization_id": 1,
-    "kudos_available": 0,
+    "kudos_available": 2,
     "kudos_last_reset": null,
     "last_reset_at": "2025-05-20T05:20:11.304813"
   },
@@ -13,7 +13,7 @@
     "username": "bob",
     "password": "bob123",
     "organization_id": 1,
-    "kudos_available": 0,
+    "kudos_available": 2,
     "kudos_last_reset": null,
     "last_reset_at": "2025-05-19T17:08:09.461506"
   },
@@ -22,7 +22,7 @@
     "username": "sowjanya",
     "password": "sowjanya123",
     "organization_id": 2,
-    "kudos_available": 0,
+    "kudos_available": 2,
     "kudos_last_reset": null,
     "last_reset_at": "2025-05-19T17:22:36.513804"
   }
