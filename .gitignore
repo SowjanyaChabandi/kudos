@@ -1,0 +1,6 @@
+/kudos-ui
+/kudos
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
