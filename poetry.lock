@@ -235,6 +235,21 @@ files = [
 Flask = ">=0.9"
 
 [[package]]
+name = "flask-request-id"
+version = "0.1"
+description = "Extract yourself some Request IDs."
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "flask-request-id-0.1.tar.gz", hash = "sha256:f7595e059fd92869bbe7fcd288fb47d1a981e3f442ad75d59c79dde214682b4d"},
+]
+
+[package.dependencies]
+Flask = ">=0.7"
+wsgi-request-id = ">=0.2"
+
+[[package]]
 name = "flask-restx"
 version = "1.3.0"
 description = "Fully featured framework for fast, easy and documented API development with Flask"
@@ -848,7 +863,18 @@ MarkupSafe = ">=2.1.1"
 [package.extras]
 watchdog = ["watchdog (>=2.3)"]
 
+[[package]]
+name = "wsgi-request-id"
+version = "0.2"
+description = "Extract yourself some Request IDs."
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "wsgi-request-id-0.2.tar.gz", hash = "sha256:5c8c873ac8617d9b64f12691e7d18444b64a07838c018248c6aa9bbf91829a04"},
+]
+
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12,<3.13"
-content-hash = "dd386005cece1dd0ca879ce3f1602343317281850f21f418aaad8ab9dbd3ca1c"
+content-hash = "7b112d3eca7fa12ac1adf3273c5c5d35a336a86577c4aff469e84bd7da59fe50"

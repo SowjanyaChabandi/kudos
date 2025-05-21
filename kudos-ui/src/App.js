@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './App.css';
-import Login from './components/login';
+import Login from './components/Login';
 import Modal from './components/Modal';
 import UserList from './components/UserList';
 import SendKudo from './components/SendKudos';
