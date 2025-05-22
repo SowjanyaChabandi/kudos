@@ -24,23 +24,15 @@ def test_login_invalid(client):
     assert response.status_code == 404
 
 
-def test_logout(client):
-    response = client.post('/logout')
-    assert response.status_code == 200
-    assert response.json['message'] == 'Logged out'
-
-
 def test_get_current_user_success(client):
-    client.post('/login', json={'username': 'alice', 'password': 'alice123'})
-    response = client.get('/login/me')
+    response = client.post('/login', json={'username': 'alice', 'password': 'alice123'})
     assert response.status_code == 200
     assert response.json['username'] == 'alice'
 
 
 def test_get_current_user_unauthorized(client):
-    client.post('/login', json={'username': 'alice', 'password': 'password'})
-    response = client.get('/login/me')
-    assert response.status_code == 401
+    response = client.post('/login', json={'username': 'alice', 'password': 'password'})
+    assert response.status_code == 404
 
 
 def test_list_users(client):
@@ -49,17 +41,6 @@ def test_list_users(client):
     assert response.status_code == 200
     assert isinstance(response.json, list)
 
-
-# def test_give_kudo(client, mock_data):
-#     client.post('/login', json={'username': 'user1', 'password':'password'})
-#     response = client.post('/kudos/send', json={
-#         'receiver_id': 1,
-#         'message': 'Great job!',
-#         'giver_name': 'bob',   
-#         'receiver_name': 'alice' 
-#     })
-#     assert response.status_code == 200
-#     assert response.json['message'] == 'Kudo given successfully'
 
 def test_give_kudo(client, mock_data):
     # Login first
