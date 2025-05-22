@@ -57,6 +57,42 @@ class Login(Resource):
             }, 200
         return {'error': 'Invalid username or password'}, 404
 
+
+@users_ns.route('/create')
+class CreateUser(Resource):
+    @users_ns.expect(login_model)
+    def post(self):
+        data = users_ns.payload
+        username = data.get('username', '')
+        password = data.get('password', '')
+        org_id = data.get('organization_id')
+        now = datetime.utcnow()
+
+
+        if not username or not password or not org_id:
+            return {'error': 'Username, password, and organization_id are required'}, 400
+        
+        if not Organization.get_by_id(org_id):
+            return {'error': 'Invalid organization_id'}, 400
+
+        existing = User.get_by_username(username)
+        if existing:
+            return {'error': 'Username already exists'}, 400
+
+        new_user = {
+            "id": max([u["id"] for u in User.get_all()] + [0]) + 1,
+            "username": username,
+            "password": password,
+            "organization_id": org_id,
+            "kudos_available": 3,
+            "kudos_last_reset": None,
+            "last_reset_at": now.isoformat()
+        }
+
+        User.update(new_user)
+        return {'message': 'User created', 'user': new_user}, 201
+
+
 @users_ns.route('/available')
 class Users(Resource):
 
