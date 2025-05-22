@@ -35,7 +35,7 @@ try:
 except (FileNotFoundError, json.JSONDecodeError):
     kudos = []
 
-IN_MEMORY_USERS = {}
+IN_MEMORY_USERS = {user['id']: user for user in users}
 
 def save_users():
     # Convert datetime to isoformat string before saving
@@ -83,9 +83,7 @@ class User:
                 users[i] = user
                 break
         else:
-            # If not found, add user (optional)
             users.append(user)
-
         IN_MEMORY_USERS[user['id']] = user
         save_users()
 

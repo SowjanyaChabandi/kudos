@@ -1,20 +1,34 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import './SendKudos.css';
 
-function SendKudo({ users, onSendKudo }) {
-  const [receiverId, setReceiverId] = useState('')
-  const [message, setMessage] = useState('')
+function SendKudo({ users, currentUser, onSendKudo }) {
+  const [receiverId, setReceiverId] = useState('');
+  const [message, setMessage] = useState('');
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    if (receiverId && message.trim()) {
-      onSendKudo(parseInt(receiverId), message)
-      setReceiverId('')
-      setMessage('')
-    } else {
-      alert('Please select a user and enter a message')
+    e.preventDefault();
+
+    if (!currentUser) {
+      alert('Current user not available');
+      return;
     }
-  }
+
+    const receiver = users.find(user => user.id === parseInt(receiverId));
+
+    if (receiver && message.trim()) {
+      onSendKudo({
+        giver_id: currentUser.id,
+        giver_name: currentUser.username,
+        receiver_id: receiver.id,
+        receiver_name: receiver.username,
+        message: message.trim()
+      });
+      setReceiverId('');
+      setMessage('');
+    } else {
+      alert('Please select a user and enter a message');
+    }
+  };
 
   return (
     <div className="kudo-form-container">
@@ -58,4 +72,4 @@ function SendKudo({ users, onSendKudo }) {
   );
 }
 
-export default SendKudo
+export default SendKudo;

@@ -1,8 +1,7 @@
-from flask import Flask
+from flask import Flask, Blueprint
 from flask_cors import CORS
 from flask_restx import Api
 from service.routes import init_routes
-from flask import Blueprint
 
 def create_app():
     app = Flask(__name__)
@@ -24,22 +23,7 @@ def create_app():
     # Register blueprint
     app.register_blueprint(blueprint)
 
-    # Configure CORS
-    CORS(
-        app,
-        resources={r"/*": {"origins": "http://localhost:3000"}},
-        supports_credentials=True
-    )
-
-
-    # Session cookie configuration
-    app.config.update(
-        SESSION_COOKIE_SAMESITE='None',
-        SESSION_COOKIE_SECURE=False,
-        SESSION_COOKIE_HTTPONLY=True,
-        SESSION_COOKIE_PATH='/'
-    )
-
+    CORS(app)
 
     return app
 

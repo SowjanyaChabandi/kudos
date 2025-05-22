@@ -17,11 +17,10 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const filteredKudos = receivedKudos.filter(k => k.receiver === user.username);
+  const filteredKudos = receivedKudos.filter(k => user && k.receiver === user.username);
 
   const axiosInstance = axios.create({
     baseURL: API_URL,
-    withCredentials: true,
     headers: {
       'Content-Type': 'application/json',
       'Cache-Control': 'no-cache',
@@ -29,41 +28,24 @@ function App() {
     },
     timeout: 5000,
   });
-  
+
   axiosInstance.interceptors.response.use(
     response => response,
     async error => {
       const config = error.config;
-  
-      if (!config || config.retryCount >= 3) {
-        return Promise.reject(error);
-      }
-  
-      if (config.method?.toLowerCase() !== 'get') {
-        return Promise.reject(error);
-      }
-  
+      if (!config || config.retryCount >= 3) return Promise.reject(error);
+      if (config.method?.toLowerCase() !== 'get') return Promise.reject(error);
+
       config.retryCount = (config.retryCount || 0) + 1;
       await new Promise(resolve => setTimeout(resolve, 1000 * config.retryCount));
       return axiosInstance({ ...config, data: config.data });
     }
   );
-  
 
-  const fetchCurrentUser = useCallback(async () => {
-    try {
-      const response = await axiosInstance.get('/login/me');
-      setUser(response.data);
-      setError(null);
-      return response.data;
-    } catch (err) {
-      console.error('Fetch current user error:', err);
-      const errorMessage = err.response
-        ? `Failed to fetch current user: ${err.response.data?.error || err.message}`
-        : 'Failed to fetch current user: Network Error - Server may be down';
-      setUser(null);
-      setError(errorMessage);
-      return null;
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
@@ -97,28 +79,24 @@ function App() {
     }
   }, []);
 
-
   useEffect(() => {
-    const initSession = async () => {
-      const currentUser = await fetchCurrentUser();
-      if (currentUser) {
-        await Promise.all([fetchUsers(), fetchReceivedKudos()]);
-      }
-    };
-    initSession();
-  }, [fetchCurrentUser, fetchUsers, fetchReceivedKudos]);
-
+    if (user) {
+      fetchUsers();
+      fetchReceivedKudos();
+    } else {
+      setUsers([]);
+      setReceivedKudos([]);
+    }
+  }, [user, fetchUsers, fetchReceivedKudos]);
 
   const handleLogin = async (username, password) => {
-    if (loading) return; // Prevent double submit
-    console.log('handleLogin triggered for:', username);
-
+    if (loading) return;
     setLoading(true);
     try {
       const response = await axiosInstance.post('/login', { username, password });
       setUser(response.data);
+      localStorage.setItem('user', JSON.stringify(response.data)); // ✅ Save user
       setError(null);
-      await Promise.all([fetchUsers(), fetchReceivedKudos()]);
     } catch (err) {
       console.error('Login error:', err);
       if (err.code === 'ECONNABORTED') {
@@ -130,7 +108,7 @@ function App() {
           ? `Login failed: ${err.response.data?.error || err.message}`
           : 'Login failed: Network error - Server may be down';
         setError(errorMessage);
-        setUser(null)
+        setUser(null);
       }
     } finally {
       setLoading(false);
@@ -138,15 +116,32 @@ function App() {
   };
 
 
-  const handleSendKudo = async (receiverId, message) => {
+  const handleSendKudo = async ({ giver_id, giver_name, receiver_id, receiver_name, message }) => {
+    if (giver_id === receiver_id) {
+      alert("You cannot give kudos to yourself");
+      return;
+    }
     try {
-      await axiosInstance.post('/kudos/send', { receiver_id: receiverId, message });
+      await axiosInstance.post('/kudos/send', {
+        giver_id,
+        giver_name,
+        receiver_id,
+        receiver_name,
+        message
+      });
+  
+      const updatedUser = {
+        ...user,
+        kudos_available: user.kudos_available - 1
+      };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser)); // Update storage
+  
       setError(null);
       alert('Kudo sent successfully!');
   
-      // Ensure all related data is updated
+      // Refresh UI data
       await Promise.all([
-        fetchCurrentUser(),
         fetchReceivedKudos(),
         fetchUsers()
       ]);
@@ -161,16 +156,12 @@ function App() {
   };
   
 
-  const handleLogout = async () => {
-    try {
-      await axiosInstance.post('/logout');
-    } catch (err) {
-      console.error('Logout error:', err);
-    }
+  const handleLogout = () => {
     setUser(null);
     setUsers([]);
     setReceivedKudos([]);
     setError(null);
+    localStorage.removeItem('user');
   };
 
   return (
@@ -191,7 +182,12 @@ function App() {
           <div className="grid-layout">
             <div className="send-kudos-card">
               <h2 className="section-title">Send Kudos</h2>
-              <SendKudo users={users} onSendKudo={handleSendKudo} disabled={user.kudos_available <= 0}/>
+              <SendKudo
+                users={users}
+                currentUser={user}
+                onSendKudo={handleSendKudo}
+                disabled={user.kudos_available <= 0}
+              />
             </div>
             <div>
               <button onClick={() => setModalOpen(true)} className="open-modal-button">
@@ -199,21 +195,18 @@ function App() {
               </button>
             </div>
           </div>
-          <Modal
-            isOpen={modalOpen}
-            onRequestClose={() => setModalOpen(false)}
-            >
+          <Modal isOpen={modalOpen} onRequestClose={() => setModalOpen(false)}>
             <div className="modal-content-scroll">
               <ReceivedKudos kudos={filteredKudos} />
             </div>
           </Modal>
           <button onClick={handleLogout} className="logout-button">
-              Logout
+            Logout
           </button>
         </div>
       )}
     </div>
   );
-}  
+}
 
 export default App;

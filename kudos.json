@@ -1,125 +1,56 @@
 [
   {
     "id": 1,
-    "giver_id": 3,
-    "receiver_id": 1,
-    "message": "hi",
-    "created_at": "2025-05-19T12:55:21.558565"
-  },
-  {
-    "id": 2,
-    "giver_id": 3,
-    "receiver_id": 2,
-    "message": "hi",
-    "created_at": "2025-05-19T12:55:29.273347"
-  },
-  {
-    "id": 3,
-    "giver_id": 3,
-    "receiver_id": 1,
-    "message": "hello",
-    "created_at": "2025-05-19T12:55:37.364370"
-  },
-  {
-    "id": 4,
-    "giver_id": 1,
-    "receiver_id": 3,
-    "message": "hi",
-    "created_at": "2025-05-19T16:57:23.613624"
-  },
-  {
-    "id": 5,
-    "giver_id": 1,
-    "receiver_id": 2,
-    "message": "Hi",
-    "created_at": "2025-05-19T17:00:39.340733"
-  },
-  {
-    "id": 6,
-    "giver_id": 1,
-    "receiver_id": 2,
-    "message": "Hi",
-    "created_at": "2025-05-19T17:00:51.909540"
-  },
-  {
-    "id": 7,
-    "giver_id": 2,
-    "receiver_id": 3,
-    "giver_name": null,
-    "receiver_name": null,
-    "message": "Hey Hiiiiiiiiiiiiiiiiii",
-    "created_at": "2025-05-19T17:08:09.464042"
-  },
-  {
-    "id": 8,
-    "giver_id": 3,
-    "receiver_id": 1,
-    "giver_name": null,
-    "receiver_name": null,
-    "message": "Hi",
-    "created_at": "2025-05-19T17:22:36.517006"
-  },
-  {
-    "id": 9,
-    "giver_id": 3,
-    "receiver_id": 2,
-    "giver_name": null,
-    "receiver_name": null,
-    "message": "Hello",
-    "created_at": "2025-05-19T17:22:45.540589"
-  },
-  {
-    "id": 10,
-    "giver_id": 3,
-    "receiver_id": 1,
-    "giver_name": null,
-    "receiver_name": null,
-    "message": "Hey HIIIIIIIIIIIIIIIIIIIIII",
-    "created_at": "2025-05-19T17:22:56.826400"
-  },
-  {
-    "id": 11,
-    "giver_id": 1,
-    "receiver_id": 2,
-    "giver_name": null,
-    "receiver_name": null,
-    "message": "Heloooooooooooooooooo",
-    "created_at": "2025-05-20T05:20:11.318886"
-  },
-  {
-    "id": 12,
-    "giver_id": 1,
-    "receiver_id": 3,
-    "giver_name": null,
-    "receiver_name": null,
-    "message": "HIIIIIIIIIIIIIIIIIIIIIIIIIIIII",
-    "created_at": "2025-05-20T05:20:20.562762"
-  },
-  {
-    "id": 13,
     "giver_id": 1,
     "receiver_id": 2,
     "giver_name": "alice",
     "receiver_name": "bob",
-    "message": "Great job!",
-    "created_at": "2025-05-20T10:48:23.977739"
+    "message": "Hello bob",
+    "created_at": "2025-05-22T10:41:16.709822"
   },
   {
-    "id": 14,
-    "giver_id": 2,
-    "receiver_id": 1,
-    "giver_name": "bob",
-    "receiver_name": "alice",
-    "message": "Great job!",
-    "created_at": "2025-05-20T11:30:30.757942"
+    "id": 2,
+    "giver_id": 1,
+    "receiver_id": 3,
+    "giver_name": "alice",
+    "receiver_name": "sowjanya",
+    "message": "Hi",
+    "created_at": "2025-05-22T10:42:47.705008"
   },
   {
-    "id": 15,
+    "id": 3,
     "giver_id": 2,
-    "receiver_id": 1,
+    "receiver_id": 3,
     "giver_name": "bob",
-    "receiver_name": "alice",
-    "message": "Great job!",
-    "created_at": "2025-05-20T11:30:39.419132"
+    "receiver_name": "sowjanya",
+    "message": "Hi",
+    "created_at": "2025-05-22T10:43:28.307976"
+  },
+  {
+    "id": 4,
+    "giver_id": 2,
+    "receiver_id": 3,
+    "giver_name": "bob",
+    "receiver_name": "sowjanya",
+    "message": "Hello",
+    "created_at": "2025-05-22T10:46:15.136720"
+  },
+  {
+    "id": 5,
+    "giver_id": 3,
+    "receiver_id": 2,
+    "giver_name": "sowjanya",
+    "receiver_name": "bob",
+    "message": "Hello sowji",
+    "created_at": "2025-05-22T10:49:43.403202"
+  },
+  {
+    "id": 6,
+    "giver_id": 3,
+    "receiver_id": 2,
+    "giver_name": "sowjanya",
+    "receiver_name": "bob",
+    "message": "Hey",
+    "created_at": "2025-05-22T10:51:19.931259"
   }
 ]
