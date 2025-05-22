@@ -27,10 +27,7 @@ def create_app():
     # Configure CORS
     CORS(
         app,
-        resources={r"/*": {
-            "origins": "http://localhost:3000",
-            "supports_credentials": True
-        }},
+        resources={r"/*": {"origins": "http://localhost:3000"}},
         supports_credentials=True
     )
 
@@ -38,7 +35,7 @@ def create_app():
     # Session cookie configuration
     app.config.update(
         SESSION_COOKIE_SAMESITE='None',
-        SESSION_COOKIE_SECURE=True,  # Must be True for SameSite=None
+        SESSION_COOKIE_SECURE=False,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_PATH='/'
     )

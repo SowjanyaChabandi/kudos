@@ -20,9 +20,9 @@ try:
                 user['kudos_last_reset'] = datetime.fromisoformat(user['kudos_last_reset'])
 except (FileNotFoundError, json.JSONDecodeError):
     users = [
-        {"id": 1, "username": "alice", "organization_id": 1, "kudos_available": 3, "kudos_last_reset": None},
-        {"id": 2, "username": "bob", "organization_id": 1, "kudos_available": 3, "kudos_last_reset": None},
-        {"id": 3, "username": "sowji", "organization_id": 2, "kudos_available": 3, "kudos_last_reset": None}
+        {"id": 1, "username": "alice", "password": "alice123", "organization_id": 1, "kudos_available": 3, "kudos_last_reset": None},
+        {"id": 2, "username": "bob", "password": "bob123", "organization_id": 1, "kudos_available": 3, "kudos_last_reset": None},
+        {"id": 3, "username": "sowjanya", "password": "sowjanya123", "organization_id": 2, "kudos_available": 3, "kudos_last_reset": None}
     ]
 
 # Load kudos from file or start empty
